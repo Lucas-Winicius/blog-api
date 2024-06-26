@@ -5,6 +5,6 @@ export const post = pgTable('posts', {
   title: varchar('title'),
   slug: varchar('slug'),
   content: text('content'),
-  createdAt: timestamp("created_at"),
-  updatedAt: timestamp("updated_at"),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()),
 })
