@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyInstance, FastifyRequest } from 'fastify'
 import { db } from '../../db/db'
-import { post } from '../../db/schema/posts'
+import { insertPostSchema, post } from '../../db/schema/posts'
 
 type PostBody = {
   title: string
@@ -11,16 +11,18 @@ type PostBody = {
 export default async function postRoute(app: FastifyInstance) {
   app.post(
     '/posts',
-    async (
+    async function (
       request: FastifyRequest<{ Body: PostBody }>,
       reply: FastifyReply
-    ) => {
-      const { title, slug, content } = request.body
-      const response = await db.insert(post).values({
-        title: title,
-        slug: slug,
-        content: content,
-      })
+    ) {
+      const postData = insertPostSchema.parse(request.body)
+
+      const response = await db
+        .insert(post)
+        .values(postData)
+        .onConflictDoNothing()
+        .returning()
+
       return reply.status(201).send(response)
     }
   )

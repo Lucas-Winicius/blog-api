@@ -7,7 +7,8 @@
     "build": "tsc",
     "dev": "tsx watch --ignore node_modules --ignore volumes src/server.ts",
     "lint": "eslint . --ext .ts",
-    "migrate": "drizzle-kit migrate",
+    "migrate:dev": "drizzle-kit migrate",
+    "migrate": "drizzle-kit push",
     "generate": "drizzle-kit generate"
   },
   "keywords": [],
@@ -21,10 +22,13 @@
     "@typescript-eslint/parser": "^7.13.1",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.31.2",
+    "drizzle-zod": "^0.5.1",
     "eslint-plugin-drizzle": "^0.2.3",
     "fastify": "^4.28.0",
     "pg": "^8.12.0",
-    "postgres": "^3.4.4"
+    "postgres": "^3.4.4",
+    "redis": "^4.6.14",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.5.0",

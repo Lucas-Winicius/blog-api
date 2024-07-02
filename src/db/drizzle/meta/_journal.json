@@ -15,6 +15,13 @@
       "when": 1719695410056,
       "tag": "0001_busy_karma",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1719871014920,
+      "tag": "0002_groovy_nekra",
+      "breakpoints": true
     }
   ]
 }
