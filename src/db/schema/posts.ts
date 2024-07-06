@@ -12,11 +12,15 @@ export const post = pgTable('posts', {
     .$defaultFn(() => createId())
     .primaryKey(),
 
+  image: varchar('image'),
+
   title: varchar('title').notNull(),
+
+  subtitle: varchar('subtitle').notNull(),
 
   slug: varchar('slug').unique().notNull(),
 
-  content: text('content').array().notNull(),
+  content: text('content').notNull(),
 
   createdAt: timestamp('created_at').defaultNow(),
 
@@ -26,7 +30,9 @@ export const post = pgTable('posts', {
 })
 
 export const insertPostSchema = createInsertSchema(post, {
+  image: z.string().url().optional(),
   title: z.string().min(5).max(200),
+  subtitle: z.string().min(10).max(600),
   slug: z.string().min(5).max(220).regex(/^[a-zA-Z0-9-]{1,}$/),
-  content: z.array(z.string()).min(3).max(5000),
+  content: z.string().min(3)
 })
