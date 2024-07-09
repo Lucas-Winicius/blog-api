@@ -1,28 +1,37 @@
-import { createClient } from 'redis';
+import { createClient } from 'redis'
 
-export default (async () => {
-  const client = await createClient()
-    .on('error', (err) => console.error('Redis Client Error:', err))
-    .on('connect', () => console.log('Connected to Redis'))
-    .connect()
+const redis = createClient({
+  url: process.env.REDIS_URL,
+})
 
-    async function get(key: string) {
-      try {
-        const result = await client.get(key)
-        return result ? result.toString() : null
-      } catch (err) {
-        console.error('Error getting Redis key:', err)
-        return null
-      }
-    }
+redis.on('error', () => console.log('Redis Client Error'))
+redis.on('connect', () => console.log('Redis connected'))
 
-    async function set(key: string, value: string | number) {
-      try {
-        await client.set(key, value)
-      } catch (err) {
-        console.error('Error setting Redis key:', err)
-      }
-    }
+async function isHealthy() {
+  try {
+    const pingResponse = await redis.ping()
+    return pingResponse === 'PONG'
+  } catch (err) {
+    return false
+  }
+}
 
-    return { get, set }
-})()
+export async function get(key: string) {
+  try {
+    const result = await redis.get(key)
+    return result ? result.toString() : null
+  } catch (err) {
+    console.error('Error getting Redis key:', err)
+    return null
+  }
+}
+
+export async function set(key: string, value: string | number) {
+  try {
+    await redis.set(key, value, { EX: 7200, NX: true })
+  } catch (err) {
+    console.error('Error setting Redis key:', err)
+  }
+}
+
+export default { get, set, isHealthy, client: redis }

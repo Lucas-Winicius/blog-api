@@ -2,7 +2,6 @@ import fastify from 'fastify'
 import 'dotenv/config'
 import routes from './routes'
 import cors from '@fastify/cors'
-import './db/redis'
 
 const port = parseInt(process.env.PORT || '3000')
 
