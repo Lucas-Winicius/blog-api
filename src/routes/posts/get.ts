@@ -1,11 +1,12 @@
 import { FastifyReply, FastifyInstance, FastifyRequest } from 'fastify'
 import { db } from '../../db/db'
 import { post } from '../../db/schema/posts'
-import { eq } from 'drizzle-orm'
+import { eq, or } from 'drizzle-orm'
 import redis from '../../db/redis'
 
 type UrlQuery = {
   id: string
+  slug: string
 }
 
 export default async function getRoute(app: FastifyInstance) {
@@ -15,19 +16,31 @@ export default async function getRoute(app: FastifyInstance) {
       request: FastifyRequest<{ Querystring: UrlQuery }>,
       reply: FastifyReply
     ) {
-      const id = request.query.id
-      const cache = await redis.get(`post:${id}`)
+      const id = request.query.id || ''
+      const slug = request.query.slug || ''
+      const cacheById = await redis.get(`post:${id}`)
+      const cacheBySlug = await redis.get(`post:${slug}`)
 
-
-      if (cache) {
-        return reply.status(200).send(JSON.parse(cache))
+      if (cacheById) {
+        return reply.status(200).send(JSON.parse(cacheById))
       }
 
-      const postData = await db.select().from(post).where(eq(post.id, id))
+      if (cacheBySlug) {
+        return reply.status(200).send(JSON.parse(cacheBySlug))
+      }
 
-      if (postData) {
-        redis.set(`post:${id}`, JSON.stringify(postData[0]))
-        return reply.status(200).send(postData[0])
+      const postData = await db
+        .select()
+        .from(post)
+        .where(or(eq(post.id, id), eq(post.slug, slug)))
+
+      if(postData.length) {
+         postData.forEach(post => {
+           redis.set(`post:${post.id}`, JSON.stringify(post))
+           redis.set(`post:${post.slug}`, JSON.stringify(post))
+         })
+
+         return reply.status(200).send(postData)
       }
 
       reply.status(404).send({

@@ -17,15 +17,19 @@ export default async function postRoute(app: FastifyInstance) {
       request: FastifyRequest<{ Body: PostBody }>,
       reply: FastifyReply
     ) {
-      const postData = insertPostSchema.parse(request.body) as PostBody
+      const postData = insertPostSchema.safeParse(request.body)
 
-      const response = await db
-        .insert(post)
-        .values(postData)
-        .onConflictDoNothing()
-        .returning()
+      if (postData.success) {
+        const response = await db
+          .insert(post)
+          .values(postData.data as PostBody)
+          .onConflictDoNothing()
+          .returning()
 
-      return reply.status(201).send(response)
+        return reply.status(201).send(response)
+      }
+
+      return reply.status(400).send(postData.error)
     }
   )
 }
