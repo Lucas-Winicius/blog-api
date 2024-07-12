@@ -1,7 +1,6 @@
 import { FastifyReply, FastifyInstance, FastifyRequest } from 'fastify'
 import { db } from '../../db/db'
 import { insertPostSchema, post } from '../../db/schema/posts'
-import { micromark } from 'micromark'
 
 type PostBody = {
   title: string
@@ -18,13 +17,11 @@ export default async function postRoute(app: FastifyInstance) {
       request: FastifyRequest<{ Body: PostBody }>,
       reply: FastifyReply
     ) {
-      const postData = insertPostSchema.parse(request.body)
-
-      const contentHtml = micromark(postData.content)
+      const postData = insertPostSchema.parse(request.body) as PostBody
 
       const response = await db
         .insert(post)
-        .values({...postData, content: contentHtml})
+        .values(postData)
         .onConflictDoNothing()
         .returning()
 
