@@ -21,7 +21,7 @@ export const post = pgTable('posts', {
 
   content: text('content').notNull(),
 
-  // authorId: integer('author_id').notNull(),
+  authorId: integer('author_id').notNull(),
 
   createdAt: timestamp('created_at').defaultNow(),
 
@@ -30,12 +30,12 @@ export const post = pgTable('posts', {
     .defaultNow(),
 })
 
-// export const postsRelations = relations(post, ({ one }) => ({
-//   author: one(user, {
-//     fields: [post.authorId],
-//     references: [user.id]
-//   })
-// }))
+export const postsRelations = relations(post, ({ one }) => ({
+  author: one(user, {
+    fields: [post.authorId],
+    references: [user.id]
+  })
+}))
 
 export const insertPostSchema = createInsertSchema(post, {
   image: z.string().url().optional(),

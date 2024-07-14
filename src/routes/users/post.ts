@@ -16,12 +16,12 @@ export default async function (app: FastifyInstance) {
       request: FastifyRequest<{ Body: UserBody }>,
       reply: FastifyReply
     ) => {
-      const userData = insertUserSchema.safeParse(request.body)
+      const userData = await insertUserSchema.safeParseAsync(request.body)
 
       if (userData.success) {
         const response = await db
           .insert(user)
-          .values(userData.data as UserBody)
+          .values(userData.data as unknown as UserBody)
           .returning()
           .onConflictDoNothing()
 

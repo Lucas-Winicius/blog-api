@@ -1,8 +1,15 @@
 import { relations } from 'drizzle-orm'
-import { pgEnum, pgTable, serial, timestamp, varchar } from 'drizzle-orm/pg-core'
+import {
+  pgEnum,
+  pgTable,
+  serial,
+  timestamp,
+  varchar,
+} from 'drizzle-orm/pg-core'
 import { createInsertSchema } from 'drizzle-zod'
 import { z } from 'zod'
 import { post } from './posts'
+import hash from '../../shared/hash'
 
 export const roleEnum = pgEnum('role', ['admin', 'contributor', 'user'])
 
@@ -24,13 +31,22 @@ export const user = pgTable('users', {
     .defaultNow(),
 })
 
-// export const userRelactions = relations(user, ({ many }) => ({
-//   posts: many(post)
-// }) )
+export const userRelactions = relations(user, ({ many }) => ({
+  posts: many(post)
+}) )
 
 export const insertUserSchema = createInsertSchema(user, {
   name: z.string().min(2).max(255),
-  username: z.string().min(5).max(255).regex(/^[a-zA-Z0-9._-]{1,}$/),
-  password: z.string().min(8).max(255),
-  role: z.enum(roleEnum.enumValues).default('user')
+  username: z
+    .string()
+    .min(5)
+    .max(255)
+    .regex(/^[a-zA-Z0-9._-]{1,}$/),
+
+  password: z
+    .string()
+    .min(8)
+    .max(255)
+    .transform(async (password) => (await hash.create(password)).hash),
+  role: z.enum(roleEnum.enumValues).default('user'),
 })
