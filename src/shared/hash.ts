@@ -29,19 +29,18 @@ async function create(data: string) {
 
 async function compare(hash: string, data: string) {
   try {
-    if (await argon2.verify(hash, data)) {
+    const hashMatch = await argon2.verify(hash, data)
+    if (hashMatch) {
       return {
-        success: true,
         match: true,
       }
     } else {
       return {
-        success: true,
         match: false,
       }
     }
   } catch (err) {
-    return { success: false, error: err }
+    return { match: false, error: err }
   }
 }
 

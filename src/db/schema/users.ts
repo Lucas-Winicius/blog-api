@@ -50,3 +50,8 @@ export const insertUserSchema = createInsertSchema(user, {
     .transform(async (password) => (await hash.create(password)).hash),
   role: z.enum(roleEnum.enumValues).default('user'),
 })
+
+export const loginSchema = z.object({
+  username: z.string().min(5).max(255).regex(/^[a-zA-Z0-9._-]{1,}$/),
+  password: z.string().min(8).max(255),
+})
