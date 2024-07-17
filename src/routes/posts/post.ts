@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyInstance, FastifyRequest } from 'fastify'
 import { db } from '../../db/db'
 import { insertPostSchema, post } from '../../db/schema/posts'
+import userCredentials from '../../auth/userCredentials'
 
 type PostBody = {
   title: string
@@ -10,19 +11,28 @@ type PostBody = {
   content: string
 }
 
+type ParsedBody = {
+  authorId: number
+} & PostBody
+
 export default async function postRoute(app: FastifyInstance) {
-  app.post(
-    '/posts',
-    async function (
+  app.route({
+    method: 'POST',
+    url: '/posts',
+    preHandler: app.auth([userCredentials]),
+    handler: async function (
       request: FastifyRequest<{ Body: PostBody }>,
       reply: FastifyReply
     ) {
-      const postData = insertPostSchema.safeParse(request.body)
+      const postData = insertPostSchema.safeParse({
+        ...request.body,
+        authorId: request.user,
+      })
 
       if (postData.success) {
         const response = await db
           .insert(post)
-          .values(postData.data as PostBody)
+          .values(postData.data as ParsedBody)
           .onConflictDoNothing()
           .returning()
 
@@ -30,6 +40,6 @@ export default async function postRoute(app: FastifyInstance) {
       }
 
       return reply.status(400).send(postData.error)
-    }
-  )
+    },
+  })
 }

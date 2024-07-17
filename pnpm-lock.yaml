@@ -11,6 +11,9 @@ importers:
       '@fastify/auth':
         specifier: ^4.6.1
         version: 4.6.1
+      '@fastify/cookie':
+        specifier: ^9.3.1
+        version: 9.3.1
       '@fastify/cors':
         specifier: ^9.0.1
         version: 9.0.1
@@ -44,6 +47,9 @@ importers:
       fastify:
         specifier: ^4.28.0
         version: 4.28.0
+      fastify-plugin:
+        specifier: ^4.5.1
+        version: 4.5.1
       micromark:
         specifier: ^4.0.0
         version: 4.0.0
@@ -548,6 +554,9 @@ packages:
   '@fastify/auth@4.6.1':
     resolution: {integrity: sha512-J/UkZw6EYUX7aXu78YLV1uE1ESbHsGNKxyO+H82ixdC3AnzBT8qeBI6K19mqVHfJTICy5m9uspj7PjC7EvZQ/A==}
 
+  '@fastify/cookie@9.3.1':
+    resolution: {integrity: sha512-h1NAEhB266+ZbZ0e9qUE6NnNR07i7DnNXWG9VbbZ8uC6O/hxHpl+Zoe5sw1yfdZ2U6XhToUGDnzQtWJdCaPwfg==}
+
   '@fastify/cors@9.0.1':
     resolution: {integrity: sha512-YY9Ho3ovI+QHIL2hW+9X4XqQjXLjJqsU+sMV/xFsxZkE8p3GNnYVFpoOxF7SsP5ZL76gwvbo3V9L+FIekBGU4Q==}
 
@@ -869,6 +878,10 @@ packages:
 
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+
+  cookie-signature@1.2.1:
+    resolution: {integrity: sha512-78KWk9T26NhzXtuL26cIJ8/qNHANyJ/ZYrmEXFzUmhZdjpBv+DlWlOANRTGBt48YcyslsLrj0bMLFTmXvLRCOw==}
+    engines: {node: '>=6.6.0'}
 
   cookie@0.6.0:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
@@ -2108,6 +2121,11 @@ snapshots:
       fastify-plugin: 4.5.1
       reusify: 1.0.4
 
+  '@fastify/cookie@9.3.1':
+    dependencies:
+      cookie-signature: 1.2.1
+      fastify-plugin: 4.5.1
+
   '@fastify/cors@9.0.1':
     dependencies:
       fastify-plugin: 4.5.1
@@ -2444,6 +2462,8 @@ snapshots:
   color-name@1.1.4: {}
 
   concat-map@0.0.1: {}
+
+  cookie-signature@1.2.1: {}
 
   cookie@0.6.0: {}
 

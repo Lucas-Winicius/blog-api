@@ -33,8 +33,8 @@ export const post = pgTable('posts', {
 export const postsRelations = relations(post, ({ one }) => ({
   author: one(user, {
     fields: [post.authorId],
-    references: [user.id]
-  })
+    references: [user.id],
+  }),
 }))
 
 export const insertPostSchema = createInsertSchema(post, {
@@ -48,8 +48,10 @@ export const insertPostSchema = createInsertSchema(post, {
     .max(220)
     .regex(/^[a-zA-Z0-9-]{1,}$/),
 
-    content: z
+  content: z
     .string()
     .min(3)
     .transform((val) => micromark(val)),
+
+  authorId: z.coerce.number(),
 })
