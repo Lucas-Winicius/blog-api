@@ -2,6 +2,7 @@ import { FastifyReply, FastifyInstance, FastifyRequest } from 'fastify'
 import { db } from '../../db/db'
 import { insertPostSchema, post } from '../../db/schema/posts'
 import userCredentials from '../../auth/userCredentials'
+import canPost from '../../auth/canPost'
 
 type PostBody = {
   title: string
@@ -19,7 +20,7 @@ export default async function postRoute(app: FastifyInstance) {
   app.route({
     method: 'POST',
     url: '/posts',
-    preHandler: app.auth([userCredentials]),
+    preHandler: app.auth([userCredentials, canPost], { relation: 'and' }),
     handler: async function (
       request: FastifyRequest<{ Body: PostBody }>,
       reply: FastifyReply
