@@ -7,7 +7,7 @@ const redis = new Redis({
 
 redis.on('error', () => console.log('Redis Client Error'))
 redis.on('connect', () => console.log('Redis connected'))
-redis.on('ready', () => console.log('Redis as ready'))
+redis.on('ready', () => console.log('Redis Ready'))
 
 async function isHealthy() {
   try {
