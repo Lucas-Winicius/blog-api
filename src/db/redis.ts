@@ -1,11 +1,13 @@
-import { createClient } from 'redis'
+import { Redis } from 'ioredis'
 
-const redis = createClient({
-  url: process.env.REDIS_URL,
+const redis = new Redis({
+  enableOfflineQueue: false,
+  host: process.env.REDIS_URL,
 })
 
 redis.on('error', () => console.log('Redis Client Error'))
 redis.on('connect', () => console.log('Redis connected'))
+redis.on('ready', () => console.log('Redis as ready'))
 
 async function isHealthy() {
   try {
@@ -28,7 +30,7 @@ export async function get(key: string) {
 
 export async function set(key: string, value: string | number) {
   try {
-    await redis.set(key, value, { EX: 7200, NX: true })
+    await redis.set(key, value, 'EX', 7200, 'NX')
   } catch (err) {
     console.error('Error setting Redis key:', err)
   }
