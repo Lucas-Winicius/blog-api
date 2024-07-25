@@ -37,7 +37,7 @@ export default async function postRoute(app: FastifyInstance) {
           .onConflictDoNothing()
           .returning()
 
-        return reply.status(201).send(response)
+        return reply.status(201).send(response[0])
       }
 
       return reply.status(400).send(postData.error)

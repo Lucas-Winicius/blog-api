@@ -16,31 +16,26 @@ export default async function getRoute(app: FastifyInstance) {
       request: FastifyRequest<{ Querystring: UrlQuery }>,
       reply: FastifyReply
     ) {
-      const id = request.query.id || ''
-      const slug = request.query.slug || ''
-      const cacheById = await redis.get(`post:${id}`)
-      const cacheBySlug = await redis.get(`post:${slug}`)
+      const { id = '', slug = '' } = request.query
+      const cacheById = await redis.get(`post:id:${id}`)
+      const cacheBySlug = await redis.get(`post:slug:${slug}`)
 
-      if (cacheById) {
-        return reply.status(200).send(JSON.parse(cacheById))
-      }
+      if (cacheById) return reply.status(200).send(JSON.parse(cacheById))
 
-      if (cacheBySlug) {
-        return reply.status(200).send(JSON.parse(cacheBySlug))
-      }
+      if (cacheBySlug) return reply.status(200).send(JSON.parse(cacheBySlug))
 
       const postData = await db
         .select()
         .from(post)
         .where(or(eq(post.id, id), eq(post.slug, slug)))
 
-      if(postData.length) {
-         postData.forEach(post => {
-           redis.set(`post:${post.id}`, JSON.stringify(post))
-           redis.set(`post:${post.slug}`, JSON.stringify(post))
-         })
+      if (postData.length) {
+        postData.forEach((post) => {
+          redis.set(`post:id:${post.id}`, JSON.stringify(post[0]))
+          redis.set(`post:slug:${post.slug}`, JSON.stringify(post[0]))
+        })
 
-         return reply.status(200).send(postData)
+        return reply.status(200).send(postData[0])
       }
 
       reply.status(404).send({
