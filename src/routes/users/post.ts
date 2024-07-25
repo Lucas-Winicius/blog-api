@@ -19,13 +19,16 @@ export default async function (app: FastifyInstance) {
       const userData = await insertUserSchema.safeParseAsync(request.body)
 
       if (userData.success) {
-        const response = await db
+        await db
           .insert(user)
           .values(userData.data as unknown as UserBody)
           .returning()
           .onConflictDoNothing()
 
-        return reply.status(201).send(response)
+        return reply.status(201).send({
+          status: 201,
+          message: 'User created successfully',
+        })
       }
 
       return reply.status(400).send(userData.error)
