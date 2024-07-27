@@ -33,7 +33,10 @@ export default async function (app: FastifyInstance) {
         .from(user)
         .where(eq(user.id, parseInt(request.user as string, 0)))
 
-      if (userData.data.role === 'admin' && userEditor[0].role !== 'admin') {
+      if (
+        userData.data.role === 'admin' ||
+        (userData.data.role === 'contributor' && userEditor[0].role !== 'admin')
+      ) {
         return reply.status(403).send({
           status: 403,
           message: 'You do not have permission to update admin users',
@@ -51,7 +54,7 @@ export default async function (app: FastifyInstance) {
         .where(eq(user.id, parseInt(request.params.id)))
         .returning()
 
-      return reply.send(updatedUser)
+      return reply.send(updatedUser[0])
     },
   })
 }
