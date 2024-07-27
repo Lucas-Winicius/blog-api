@@ -32,8 +32,8 @@ export const user = pgTable('users', {
 })
 
 export const userRelactions = relations(user, ({ many }) => ({
-  posts: many(post)
-}) )
+  posts: many(post),
+}))
 
 export const insertUserSchema = createInsertSchema(user, {
   name: z.string().min(2).max(255),
@@ -41,7 +41,8 @@ export const insertUserSchema = createInsertSchema(user, {
     .string()
     .min(5)
     .max(255)
-    .regex(/^[a-zA-Z0-9._-]{1,}$/),
+    .regex(/^[a-zA-Z0-9._-]{1,}$/)
+    .transform((password) => password.toLowerCase()),
 
   password: z
     .string()
@@ -51,7 +52,29 @@ export const insertUserSchema = createInsertSchema(user, {
   role: z.enum(roleEnum.enumValues).default('user'),
 })
 
+export const updateUserSchema = createInsertSchema(user, {
+  name: z.string().min(2).max(255).optional(),
+  username: z
+    .string()
+    .min(5)
+    .max(255)
+    .regex(/^[a-zA-Z0-9._-]{1,}$/)
+    .optional(),
+
+  password: z
+    .string()
+    .min(8)
+    .max(255)
+    .transform(async (password) => (await hash.create(password)).hash)
+    .optional(),
+  role: z.enum(roleEnum.enumValues).default('user').optional(),
+})
+
 export const loginSchema = z.object({
-  username: z.string().min(5).max(255).regex(/^[a-zA-Z0-9._-]{1,}$/),
+  username: z
+    .string()
+    .min(5)
+    .max(255)
+    .regex(/^[a-zA-Z0-9._-]{1,}$/),
   password: z.string().min(8).max(255),
 })
