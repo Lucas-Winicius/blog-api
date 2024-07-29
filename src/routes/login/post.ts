@@ -44,9 +44,12 @@ export default async function Login(app: FastifyInstance) {
           .send({ status: 401, message: 'Invalid credentials' })
       }
 
-      const jwtToken = app.jwt.sign({ id: userData[0].id }, { expiresIn: '15d' })
+      const jwtToken = app.jwt.sign(
+        { id: userData[0].id },
+        { expiresIn: '15d' }
+      )
 
-      return reply.status(200).send({ token: jwtToken })
+      return reply.status(200).send({ status: 200, token: jwtToken })
     }
   )
 }
