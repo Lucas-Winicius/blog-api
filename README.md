@@ -12,6 +12,7 @@ Greetings, I present to you my API, which will be part of my future blog. With t
   * [/users/info - GET*](#userinfo)
   * [/users - POST](#createuser)
   * [/users/:id - PATCH](#patchuser)
+  * [/posts - GET](#getonepost)
 
 # Overview
 
@@ -147,5 +148,52 @@ and as a successful response, you will receive
 	"role": "string",
 	"createdAt": "string",
 	"updatedAt": "string"
+}
+```
+<a id="getonepost"></a>
+## /posts?id=optional&slug=optional (GET)
+
+and as a successful response, you will receive
+
+```json
+{
+	"id": "string",
+	"image": "string - URL",
+	"title": "string",
+	"subtitle": "string",
+	"slug": "string",
+	"content": "HTML",
+	"authorId": "int",
+	"createdAt": "Date",
+	"updatedAt": "Date"
+}
+```
+<a id="createpost"></a>
+## /posts (POST)
+
+You will need to send
+
+```json
+{
+	"image": "string - URL",
+	"title": "string",
+	"subtitle": "string",
+	"slug": "string",
+	"content": "string - MARKDOWN"
+}
+```
+and as a successful response, you will receive
+
+```json
+{
+	"id": "string",
+	"image": "string - URL",
+	"title": "string",
+	"subtitle": "string",
+	"slug": "string",
+	"content": "HTML",
+	"authorId": "int",
+	"createdAt": "Date",
+	"updatedAt": "Date"
 }
 ```
