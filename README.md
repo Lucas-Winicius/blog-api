@@ -4,10 +4,14 @@
 Greetings, I present to you my API, which will be part of my future blog. With this API, you will be able to create users with three roles that will be explained in the future. Before I go on too long, let's start the documentation.
 
 # Topics
-- [Overview](#oiverview)
+- [Overview](#overview)
 - [Roles](#roles)
 - [Routes](#routes)
-  * [Routes](#routes)
+  * [/signin - POST](#signin)
+  * [/users/:username - GET](#userget)
+  * [/users/info - GET*](#userinfo)
+  * [/users - POST](#createuser)
+  * [/users/:id - PATCH](#patchuser)
 
 # Overview
 
@@ -25,21 +29,123 @@ Before we begin, it's important to know that the routes marked with **" * "** re
 Authorization: Bearer <Your_Token>
 ```
 
-## /signin
+<a id="signin"></a>
+## /signin (POST)
 
 You will need to send
 
 ```json
 {
-	"username": "<Username>",
-	"password": "<Password>"
+	"username": "",
+	"password": ""
 }
 ```
 and as a successful response, you will receive
 
 ```json
 {
-	"status": <Response code>,
-	"token": "<JWT Token>"
+	"status": "int",
+	"token": "string"
+}
+```
+
+<a id="userget"></a>
+## /users/:username (GET)
+
+as a successful response, you will receive
+
+```json
+{
+	"id": "int",
+  "name": "string",
+	"username": "string",
+	"role": "'user' | 'contributor' | 'admin'",
+	"createdAt": "Date",
+	"updatedAt": "Date",
+  "posts": [
+    {
+      "id": "string",
+			"image": "string - URL",
+			"title": "string",
+			"subtitle": "string",
+			"slug": "string",
+			"content": "HTML",
+			"authorId": "int",
+			"createdAt": "Date",
+			"updatedAt": "Date"
+    }
+  ]
+}
+```
+
+<a id="userinfo"></a>
+## /users/info (GET)*
+
+and as a successful response, you will receive
+
+```json
+{
+  "name": "string",
+	"username": "string",
+	"role": "'user' | 'contributor' | 'admin'",
+	"createdAt": "Date",
+	"updatedAt": "Date",
+  "posts": [
+    {
+      "id": "string",
+			"title": "string",
+			"slug": "string",
+			"content": "HTML",
+			"createdAt": "Date",
+			"updatedAt": "Date"
+    }
+  ]
+}
+```
+<a id="createuser"></a>
+## /users (POST)
+
+You will need to send
+
+```json
+{
+	"name": "",
+	"username": "",
+	"password": ""
+}
+```
+and as a successful response, you will receive
+
+```json
+{
+	"status": "int",
+	"message": "string"
+}
+```
+
+<a id="patchuser"></a>
+## /users/:id (PATCH)
+
+You will need to send
+
+```json
+{
+	"name": "<optional>",
+	"username": "<optional>",
+	"password": "<optional>",
+  "role": "<optional>"
+}
+```
+and as a successful response, you will receive
+
+```json
+{
+	"id": "int",
+	"name": "string",
+	"username": "string",
+	"password": "string",
+	"role": "string",
+	"createdAt": "string",
+	"updatedAt": "string"
 }
 ```
