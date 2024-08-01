@@ -14,7 +14,9 @@ Greetings, I present to you my API, which will be part of my future blog. With t
   - [/users/info - GET\*](#userinfo)
   - [/users - POST](#createuser)
   - [/users/:id - PATCH](#patchuser)
+  - [/posts - POST](#createpost)
   - [/posts - GET](#getonepost)
+  - [/posts/all - GET](#getallposts)
 
 # Overview
 
@@ -214,4 +216,26 @@ and as a successful response, you will receive
   "createdAt": "Date",
   "updatedAt": "Date"
 }
+```
+
+<a id="getallposts"></a>
+
+## /posts/all (GET)
+
+and as a successful response, you will receive
+
+```json
+[
+  {
+    "id": "string",
+    "image": "string - URL",
+    "title": "string",
+    "subtitle": "string",
+    "slug": "string",
+    "content": "HTML",
+    "authorId": "int",
+    "createdAt": "Date",
+    "updatedAt": "Date"
+  }
+]
 ```
