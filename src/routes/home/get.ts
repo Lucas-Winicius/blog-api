@@ -13,8 +13,8 @@ export default async function (app: FastifyInstance) {
 
     if (postData.length) {
       postData.forEach((post, id) => {
-        redis.set(`post:id:${post.id}`, JSON.stringify(post[0]))
-        redis.set(`post:slug:${post.slug}`, JSON.stringify(post[id]))
+        redis.set(`post:id:${post.id}`, JSON.stringify(postData[id]))
+        redis.set(`post:slug:${post.slug}`, JSON.stringify(postData[id]))
       })
     }
 
