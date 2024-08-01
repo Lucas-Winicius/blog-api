@@ -9,6 +9,7 @@ Greetings, I present to you my API, which will be part of my future blog. With t
 - [Overview](#overview)
 - [Roles](#roles)
 - [Routes](#routes)
+  - [/ - GET](#homeget)
   - [/signin - POST](#signin)
   - [/users/:username - GET](#userget)
   - [/users/info - GET\*](#userinfo)
@@ -34,6 +35,39 @@ Before we begin, it's important to know that the routes marked with **" \* "** r
 
 ```plaintext
 Authorization: Bearer <Your_Token>
+```
+
+<a id="homeget"></a>
+
+## / (GET)
+
+and as a successful response, you will receive
+
+```json
+[
+  "recomended": {
+    "id": "string",
+    "image": "string - URL",
+    "title": "string",
+    "subtitle": "string",
+    "slug": "string",
+    "content": "HTML",
+    "authorId": "int",
+    "createdAt": "Date",
+    "updatedAt": "Date"
+  },
+  "posts": {
+    "id": "string",
+    "image": "string - URL",
+    "title": "string",
+    "subtitle": "string",
+    "slug": "string",
+    "content": "HTML",
+    "authorId": "int",
+    "createdAt": "Date",
+    "updatedAt": "Date"
+  }
+]
 ```
 
 <a id="signin"></a>
