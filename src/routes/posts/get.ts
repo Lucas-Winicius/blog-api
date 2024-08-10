@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyInstance, FastifyRequest } from 'fastify'
 import { db } from '../../db/db'
 import { post } from '../../db/schema/posts'
-import { eq, or } from 'drizzle-orm'
+import { asc, desc, eq, gt, lt, or } from 'drizzle-orm'
 import redis from '../../db/redis'
 
 type UrlQuery = {
@@ -20,22 +20,39 @@ export default async function getRoute(app: FastifyInstance) {
       const cacheById = await redis.get(`post:id:${id}`)
       const cacheBySlug = await redis.get(`post:slug:${slug}`)
 
+      if (cacheBySlug) return reply.status(200).send(JSON.parse(cacheBySlug))
       if (cacheById) return reply.status(200).send(JSON.parse(cacheById))
 
-      if (cacheBySlug) return reply.status(200).send(JSON.parse(cacheBySlug))
-
-      const postData = await db
+      const [postData] = await db
         .select()
         .from(post)
-        .where(or(eq(post.id, id), eq(post.slug, slug)))
+        .where(or(eq(post.slug, slug), eq(post.id, id)))
 
-      if (postData.length) {
-        postData.forEach((post) => {
-          redis.set(`post:id:${post.id}`, JSON.stringify(post[0]))
-          redis.set(`post:slug:${post.slug}`, JSON.stringify(post[0]))
-        })
+      if (postData) {
+        const [previousSlug] = await db
+        .select({ slug: post.slug })
+        .from(post)
+        .where(lt(post.id, postData.id))
+        .orderBy(desc(post.id))
+        .limit(1)
 
-        return reply.status(200).send(postData[0])
+      const [nextSlug] = await db
+        .select({ slug: post.slug })
+        .from(post)
+        .where(gt(post.id, postData.id))
+        .orderBy(asc(post.id))
+        .limit(1)
+
+        const response = {
+          post: postData,
+          previousSlug: previousSlug?.slug ?? null,
+          nextSlug: nextSlug?.slug ?? null,
+        }
+
+        redis.set(`post:id:${post.id}`, JSON.stringify(response))
+        redis.set(`post:slug:${post.slug}`, JSON.stringify(response))
+
+        return reply.status(200).send(response)
       }
 
       reply.status(404).send({
