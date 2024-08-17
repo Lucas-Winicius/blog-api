@@ -3,6 +3,7 @@ import { db } from '../../db/db'
 import { post } from '../../db/schema/posts'
 import { asc, desc, eq, gt, lt, or } from 'drizzle-orm'
 import redis from '../../db/redis'
+import { user } from '../../db/schema/users'
 
 type UrlQuery = {
   id: string
@@ -27,24 +28,39 @@ export default async function getRoute(app: FastifyInstance) {
         .select()
         .from(post)
         .where(or(eq(post.slug, slug), eq(post.id, id)))
+        .execute()
 
       if (postData) {
-        const [previousSlug] = await db
-        .select({ slug: post.slug })
-        .from(post)
-        .where(lt(post.id, postData.id))
-        .orderBy(desc(post.id))
-        .limit(1)
+        const [userData] = await db
+          .select({
+            id: user.id,
+            name: user.name,
+            username: user.username,
+            role: user.role,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+          })
+          .from(user)
+          .where(eq(user.id, postData.authorId))
+          .execute()
 
-      const [nextSlug] = await db
-        .select({ slug: post.slug })
-        .from(post)
-        .where(gt(post.id, postData.id))
-        .orderBy(asc(post.id))
-        .limit(1)
+        const [previousSlug] = await db
+          .select({ slug: post.slug })
+          .from(post)
+          .where(lt(post.id, postData.id))
+          .orderBy(desc(post.id))
+          .limit(1)
+
+        const [nextSlug] = await db
+          .select({ slug: post.slug })
+          .from(post)
+          .where(gt(post.id, postData.id))
+          .orderBy(asc(post.id))
+          .limit(1)
 
         const response = {
           post: postData,
+          author: userData,
           previousSlug: previousSlug?.slug ?? null,
           nextSlug: nextSlug?.slug ?? null,
         }
