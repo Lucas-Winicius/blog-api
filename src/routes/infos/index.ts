@@ -1,6 +1,8 @@
 import { app } from '../../server'
-import get from './get'
+import getContributors from './getContributors'
+import getRecommendations from './getRecommendations'
 
 export default async function InfoRoutes() {
-  app.register(get)
+  app.register(getRecommendations)
+  app.register(getContributors)
 }
