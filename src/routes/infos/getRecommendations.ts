@@ -18,21 +18,19 @@ export default async function (app: FastifyInstance) {
         })
         .from(post)
 
-      let recomended = new Array(5)
+      let recomended = []
 
       if (postData.length < 5) {
         recomended = [...postData]
       } else {
-        for (let i = 0; i < 5; i++) {
-          const random = Math.floor(Math.random() * postData.length - 1)
-          recomended[i] = postData[random]
+        while (recomended.length < 5) {
+          const random = Math.floor(Math.random() * --postData.length)
+          if (postData[random] !== null) recomended.push(postData[random])
         }
       }
 
-      const homePage = { recomended }
-
-      redis.set(`post:system:recommendations`, JSON.stringify(homePage))
-      return reply.status(200).send(homePage)
+      redis.set(`post:system:recommendations`, JSON.stringify(recomended))
+      return reply.status(200).send(recomended)
     }
   )
 }

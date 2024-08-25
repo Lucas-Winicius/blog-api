@@ -11,25 +11,25 @@ export default async function (app: FastifyInstance) {
     if (cache) return reply.status(200).send(JSON.parse(cache))
 
     const contributorsData = await db
-      .select()
+      .select({
+        name: user.name,
+        username: user.username,
+      })
       .from(user)
       .where(or(eq(user.role, 'contributor'), eq(user.role, 'admin')))
 
-    let contributors = new Array(10)
+    let contributors = []
 
     if (contributorsData.length < 10) {
       contributors = [...contributorsData]
     } else {
-      for (let i = 0; i < 10; i++) {
+      while (contributors.length < 10) {
         const random = Math.floor(Math.random() * contributorsData.length - 1)
-        contributors[i] = contributorsData[random]
+        contributors.push(contributorsData[random])
       }
     }
 
-
-    const homePage = { contributors }
-
-    redis.set(`post:system:contributors`, JSON.stringify(homePage))
-    return reply.status(200).send(homePage)
+    redis.set(`post:system:contributors`, JSON.stringify(contributors))
+    return reply.status(200).send(contributors)
   })
 }
