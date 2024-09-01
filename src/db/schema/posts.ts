@@ -1,15 +1,12 @@
-import { integer, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core'
+import { integer, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { createInsertSchema } from 'drizzle-zod'
 import { z } from 'zod'
 import { relations } from 'drizzle-orm'
 import { user } from './users'
 import { micromark } from 'micromark'
-import createId from '../../shared/createId'
 
 export const post = pgTable('posts', {
-  id: varchar('id', { length: 10 })
-    .$defaultFn(() => createId())
-    .primaryKey(),
+  id: serial('id').primaryKey().notNull(),
 
   image: varchar('image'),
 

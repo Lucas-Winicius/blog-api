@@ -1,12 +1,11 @@
 import { FastifyReply, FastifyInstance, FastifyRequest } from 'fastify'
 import { db } from '../../db/db'
 import { post } from '../../db/schema/posts'
-import { asc, desc, eq, gt, lt, or } from 'drizzle-orm'
+import { asc, desc, eq, gt, lt } from 'drizzle-orm'
 import redis from '../../db/redis'
 import { user } from '../../db/schema/users'
 
 type UrlQuery = {
-  id: string
   slug: string
 }
 
@@ -17,17 +16,16 @@ export default async function getRoute(app: FastifyInstance) {
       request: FastifyRequest<{ Querystring: UrlQuery }>,
       reply: FastifyReply
     ) {
-      const { id = '', slug = '' } = request.query
-      const cacheById = await redis.get(`post:id:${id}`)
+      const { slug = '' } = request.query
       const cacheBySlug = await redis.get(`post:slug:${slug}`)
 
       if (cacheBySlug) return reply.status(200).send(JSON.parse(cacheBySlug))
-      if (cacheById) return reply.status(200).send(JSON.parse(cacheById))
+
 
       const [postData] = await db
         .select()
         .from(post)
-        .where(or(eq(post.slug, slug), eq(post.id, id)))
+        .where(eq(post.slug, slug))
         .execute()
 
       if (postData) {
@@ -65,8 +63,7 @@ export default async function getRoute(app: FastifyInstance) {
           nextSlug: nextSlug?.slug ?? null,
         }
 
-        redis.set(`post:id:${post.id}`, JSON.stringify(response))
-        redis.set(`post:slug:${post.slug}`, JSON.stringify(response))
+        redis.set(`post:slug:${postData.slug}`, JSON.stringify(response))
 
         return reply.status(200).send(response)
       }
