@@ -28,7 +28,15 @@ export default async function (app: FastifyInstance) {
         },
         where: eq(user.username, username),
         with: {
-          posts: true,
+          posts: {
+            columns: {
+              image: true,
+              slug: true,
+              title: true,
+              subtitle: true,
+              createdAt: true,
+            },
+          },
         },
       })
 
