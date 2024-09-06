@@ -20,11 +20,11 @@ export default async function (app: FastifyInstance) {
 
       let recomended = []
 
-      if (postData.length < 5) {
+      if (postData.length <= 5) {
         recomended = [...postData]
       } else {
         while (recomended.length < 5) {
-          const random = Math.floor(Math.random() * --postData.length)
+          const random = Math.floor(Math.random() * (postData.length - 1))
           if (postData[random] !== null) recomended.push(postData[random])
         }
       }

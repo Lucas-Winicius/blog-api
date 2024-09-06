@@ -20,7 +20,7 @@ export default async function (app: FastifyInstance) {
 
     let contributors = []
 
-    if (contributorsData.length < 10) {
+    if (contributorsData.length <= 10) {
       contributors = [...contributorsData]
     } else {
       while (contributors.length < 10) {
