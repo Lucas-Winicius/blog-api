@@ -28,8 +28,10 @@ export default async function (app: FastifyInstance) {
         with: {
           posts: {
             columns: {
+              image: true,
               id: true,
               title: true,
+              subtitle: true,
               slug: true,
               createdAt: true,
               updatedAt: true,
